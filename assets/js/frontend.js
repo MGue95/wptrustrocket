@@ -77,25 +77,125 @@
 		if (prev) prev.addEventListener('click', () => { goPrev(); resetAutoplay(); });
 		if (next) next.addEventListener('click', () => { goNext(); resetAutoplay(); });
 
-		/* Touch / swipe */
+		/* Touch / swipe / mouse drag */
 
-		let startX = 0;
-		let isDragging = false;
+		const drag = {
+			active: false,
+			startX: 0,
+			startY: 0,
+			currentX: 0,
+			startTranslate: 0,
+			dirLocked: false,
+			isHorizontal: false
+		};
 
-		track.addEventListener('touchstart', e => {
-			startX = e.touches[0].clientX;
-			isDragging = true;
-		}, { passive: true });
+		function getSlideWidthPct() {
+			return 100 / getVisible();
+		}
 
-		track.addEventListener('touchend', e => {
-			if (!isDragging) return;
-			isDragging = false;
-			const diff = startX - e.changedTouches[0].clientX;
-			if (Math.abs(diff) > 50) {
-				diff > 0 ? goNext() : goPrev();
-				resetAutoplay();
+		function getCurrentTranslatePx() {
+			return -(getSlideWidthPct() * current / 100) * track.scrollWidth;
+		}
+
+		function onDragStart(x, y) {
+			drag.active = true;
+			drag.startX = x;
+			drag.startY = y;
+			drag.currentX = x;
+			drag.startTranslate = getCurrentTranslatePx();
+			drag.dirLocked = false;
+			drag.isHorizontal = false;
+			track.classList.add('wptr-dragging');
+		}
+
+		function onDragMove(x, y, e) {
+			if (!drag.active) return;
+			const dx = x - drag.startX;
+			const dy = y - drag.startY;
+
+			if (!drag.dirLocked && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+				drag.dirLocked = true;
+				drag.isHorizontal = Math.abs(dx) > Math.abs(dy);
 			}
+
+			if (drag.dirLocked && !drag.isHorizontal) {
+				onDragEnd();
+				return;
+			}
+
+			if (drag.dirLocked && drag.isHorizontal && e.cancelable) {
+				e.preventDefault();
+			}
+
+			drag.currentX = x;
+			let translate = drag.startTranslate + dx;
+
+			const maxT = 0;
+			const minT = -(track.scrollWidth - container.offsetWidth);
+			if (translate > maxT) {
+				translate = maxT + (translate - maxT) * 0.3;
+			} else if (translate < minT) {
+				translate = minT + (translate - minT) * 0.3;
+			}
+
+			track.style.transform = 'translateX(' + translate + 'px)';
+		}
+
+		function onDragEnd() {
+			if (!drag.active) return;
+			drag.active = false;
+			track.classList.remove('wptr-dragging');
+
+			const dx = drag.currentX - drag.startX;
+			const threshold = container.offsetWidth * 0.15;
+
+			if (drag.isHorizontal && Math.abs(dx) > threshold) {
+				dx < 0 ? goNext() : goPrev();
+				resetAutoplay();
+			} else {
+				render();
+			}
+		}
+
+		// Touch
+		track.addEventListener('touchstart', e => {
+			onDragStart(e.touches[0].clientX, e.touches[0].clientY);
 		}, { passive: true });
+
+		track.addEventListener('touchmove', e => {
+			onDragMove(e.touches[0].clientX, e.touches[0].clientY, e);
+		}, { passive: false });
+
+		track.addEventListener('touchend', () => onDragEnd(), { passive: true });
+		track.addEventListener('touchcancel', () => onDragEnd(), { passive: true });
+
+		// Mouse drag
+		track.addEventListener('mousedown', e => {
+			if (e.button !== 0) return;
+			e.preventDefault();
+			onDragStart(e.clientX, e.clientY);
+			drag.dirLocked = true;
+			drag.isHorizontal = true;
+		});
+
+		document.addEventListener('mousemove', e => {
+			if (!drag.active) return;
+			e.preventDefault();
+			onDragMove(e.clientX, e.clientY, e);
+		});
+
+		document.addEventListener('mouseup', () => onDragEnd());
+
+		// Prevent link clicks after drag
+		track.addEventListener('click', e => {
+			if (Math.abs(drag.currentX - drag.startX) > 5) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+		}, true);
+
+		// Prevent image drag ghost
+		track.addEventListener('dragstart', e => e.preventDefault());
 
 		/* Autoplay */
 
@@ -109,6 +209,13 @@
 			if (autoplayTimer) clearInterval(autoplayTimer);
 			startAutoplay();
 		}
+
+		container.addEventListener('mouseenter', () => {
+			if (autoplayTimer) clearInterval(autoplayTimer);
+		});
+		container.addEventListener('mouseleave', () => {
+			if (autoplayMs > 0) startAutoplay();
+		});
 
 		/* Keyboard */
 
