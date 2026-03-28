@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: WPTrustRocket
- * Plugin URI:  https://github.com/yourusername/wptrustrocket
+ * Plugin URI:  https://github.com/MGue95/wptrustrocket
  * Description: Bewertungen von Trusted Shops (und weiteren Quellen) abrufen, kuratieren und anzeigen — mit Oxygen Builder Integration.
  * Version:     2.1.0
  * Author:      WPTrustRocket
- * Author URI:  https://github.com/yourusername/wptrustrocket
+ * Author URI:  https://github.com/MGue95/wptrustrocket
  * License:     GPL-2.0-or-later
  * Text Domain: wptrustrocket
  * Domain Path: /languages

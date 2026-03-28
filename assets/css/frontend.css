@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   WPTrustRocket – Frontend Styles
+   WPTrustRocket – Frontend Styles (Mobile First)
    All values can be overridden via CSS Custom Properties
    set inline from shortcode / Oxygen controls.
    ═══════════════════════════════════════════════ */
@@ -26,21 +26,21 @@
 	background: var(--wptr-card-bg, #ffffff);
 	border: 1px solid var(--wptr-card-border, #e2e8f0);
 	border-radius: var(--wptr-card-radius, 12px);
-	padding: var(--wptr-card-padding, 24px);
+	padding: var(--wptr-card-padding, 16px);
 	box-shadow: var(--wptr-card-shadow, 0 1px 3px rgba(0,0,0,.05), 0 1px 2px rgba(0,0,0,.03));
 	transition: box-shadow .25s ease, transform .25s ease;
+}
+
+@media (min-width: 601px) {
+	.wptr-card {
+		padding: var(--wptr-card-padding, 24px);
+	}
 }
 
 @media (hover: hover) {
 	.wptr-card:hover {
 		box-shadow: 0 8px 24px rgba(0,0,0,.08);
 		transform: translateY(-2px);
-	}
-}
-
-@media (max-width: 600px) {
-	.wptr-card {
-		padding: var(--wptr-card-padding, 16px);
 	}
 }
 
@@ -65,11 +65,21 @@
 
 .wptr-card-footer {
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 4px;
 	border-top: 1px solid var(--wptr-card-border, #e2e8f0);
 	padding-top: 12px;
 	font-size: 13px;
+}
+
+@media (min-width: 601px) {
+	.wptr-card-footer {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0;
+	}
 }
 
 .wptr-card-author {
@@ -85,19 +95,19 @@
 
 .wptr-reviews--grid {
 	display: grid;
-	grid-template-columns: repeat(var(--wptr-columns, 3), 1fr);
+	grid-template-columns: 1fr;
 	gap: var(--wptr-gap, 20px);
 }
 
-@media (max-width: 900px) {
+@media (min-width: 601px) {
 	.wptr-reviews--grid {
 		grid-template-columns: repeat(2, 1fr);
 	}
 }
 
-@media (max-width: 600px) {
+@media (min-width: 901px) {
 	.wptr-reviews--grid {
-		grid-template-columns: 1fr;
+		grid-template-columns: repeat(var(--wptr-columns, 3), 1fr);
 	}
 }
 
@@ -150,13 +160,13 @@
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
-	width: 44px;
-	height: 44px;
+	width: 36px;
+	height: 36px;
 	border-radius: 50%;
 	background: var(--wptr-card-bg, #ffffff);
 	border: 1px solid var(--wptr-card-border, #e2e8f0);
 	box-shadow: 0 2px 8px rgba(0,0,0,.1);
-	font-size: 22px;
+	font-size: 18px;
 	color: var(--wptr-title-color, #1e293b);
 	cursor: pointer;
 	z-index: 2;
@@ -171,17 +181,17 @@
 	box-shadow: 0 4px 12px rgba(0,0,0,.12);
 }
 
-.wptr-slider-btn--prev { left: 8px; }
-.wptr-slider-btn--next { right: 8px; }
+.wptr-slider-btn--prev { left: 4px; }
+.wptr-slider-btn--next { right: 4px; }
 
-@media (max-width: 600px) {
+@media (min-width: 601px) {
 	.wptr-slider-btn {
-		width: 36px;
-		height: 36px;
-		font-size: 18px;
+		width: 44px;
+		height: 44px;
+		font-size: 22px;
 	}
-	.wptr-slider-btn--prev { left: 4px; }
-	.wptr-slider-btn--next { right: 4px; }
+	.wptr-slider-btn--prev { left: 8px; }
+	.wptr-slider-btn--next { right: 8px; }
 }
 
 .wptr-slider-dots {
@@ -218,7 +228,8 @@
 
 .wptr-list-item {
 	display: flex;
-	gap: var(--wptr-gap, 24px);
+	flex-direction: column;
+	gap: 8px;
 	padding: 24px 0;
 	border-bottom: 1px solid var(--wptr-card-border, #e2e8f0);
 }
@@ -228,10 +239,11 @@
 
 .wptr-list-item-left {
 	flex-shrink: 0;
-	width: 140px;
+	width: auto;
 	display: flex;
-	flex-direction: column;
-	gap: 4px;
+	flex-direction: row;
+	align-items: center;
+	gap: 12px;
 }
 
 .wptr-list-item-right {
@@ -239,17 +251,17 @@
 	min-width: 0;
 }
 
-@media (max-width: 600px) {
+@media (min-width: 601px) {
 	.wptr-list-item {
-		flex-direction: column;
-		gap: 8px;
+		flex-direction: row;
+		gap: var(--wptr-gap, 24px);
 	}
 
 	.wptr-list-item-left {
-		width: auto;
-		flex-direction: row;
-		align-items: center;
-		gap: 12px;
+		width: 140px;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
 	}
 }
 
@@ -260,7 +272,7 @@
 	flex-direction: column;
 	align-items: center;
 	gap: 6px;
-	padding: var(--wptr-card-padding, 24px 32px);
+	padding: var(--wptr-card-padding, 16px 20px);
 	background: var(--wptr-card-bg, #ffffff);
 	border: 1px solid var(--wptr-card-border, #e2e8f0);
 	border-radius: var(--wptr-card-radius, 12px);
@@ -268,11 +280,23 @@
 	text-align: center;
 }
 
+@media (min-width: 601px) {
+	.wptr-badge {
+		padding: var(--wptr-card-padding, 24px 32px);
+	}
+}
+
 .wptr-badge-rating {
-	font-size: 42px;
+	font-size: 32px;
 	font-weight: 700;
 	color: var(--wptr-title-color, #1e293b);
 	line-height: 1;
+}
+
+@media (min-width: 601px) {
+	.wptr-badge-rating {
+		font-size: 42px;
+	}
 }
 
 .wptr-badge-stars {
@@ -290,22 +314,6 @@
 	letter-spacing: .5px;
 	color: var(--wptr-date-color, #64748b);
 	opacity: .7;
-}
-
-@media (max-width: 600px) {
-	.wptr-badge {
-		padding: var(--wptr-card-padding, 16px 20px);
-	}
-
-	.wptr-badge-rating {
-		font-size: 32px;
-	}
-
-	.wptr-card-footer {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 4px;
-	}
 }
 
 /* ───── Placeholder (Oxygen Editor) ───── */
